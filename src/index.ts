@@ -46,12 +46,13 @@ joplin.plugins.register({
 			//return "<b> testing html from command</b>"
 			//get content
 			if (message.type == "getContent"){
+				//console.log(message.query)
 			let notes
 			let has_more = true
 			let page = 1
 			let searches = ""
 			while (has_more) {
-				notes = await joplin.data.get(['search'], { query: message.query, fields: ['id', 'title', 'body', 'is_todo', 'todo_completed'], page: page });
+				notes = await joplin.data.get(['search'], { query: message.query.replace(/\_\_quote\_\_/g,'\"'), fields: ['id', 'title', 'body', 'is_todo', 'todo_completed'], page: page });
 				console.log(notes)
 
 				for (let i = 0; i < notes.items.length; i++) {
