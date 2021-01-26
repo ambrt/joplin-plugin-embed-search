@@ -16,23 +16,27 @@ module.exports = {
                 };
             
                 markdownIt.renderer.rules.fence = function(tokens, idx, options, env, self) {
-                    const token = tokens[idx];
+                    let token = tokens[idx];
                     if (token.info !== 'search') return defaultRender(tokens, idx, options, env, self);
     
 
-
+                    
                     const postMessageWithResponseTest = `
-                        webviewApi.postMessage('${pluginId}', '${contentScriptId}').then(function(response) {
-                            console.info('Got response in content script: ' + response);
+                        webviewApi.postMessage('${contentScriptId}','${token.content.trim()}').then(function(response) {
+                            console.info('Got response from content script: ');
+                            document.getElementById('embed-search2').innerHTML=response;
+
                         });
                         return false;
                     `;
     
                     return `
-                        <div class="just-testing">
-                            <p>JUST TESTING: <pre>${token.content.trim()}</pre></p>
-                            <p><a href="#" onclick="${postMessageWithResponseTest.replace(/\n/g, ' ')}">Click to post a message "justtesting" to plugin and check the response in the console</a></p>
-                        </div>
+                  
+                    <div id="embed-search">
+                    <div id="embed-search2"><style onload="${postMessageWithResponseTest.replace(/\n/g, ' ')}"/></div>
+                    
+                    </div>
+                    
                     `;
                 };
             }
