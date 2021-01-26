@@ -1,0 +1,15 @@
+.flex-grid {
+    display: flex;
+    justify-content:flex-start;
+  }
+  .col {
+    flex: 1;
+  }
+  .tick{
+    max-width:22px;
+  
+  }
+  .note{
+    margin-top:-2px;
+    font-size: 15px;
+  }

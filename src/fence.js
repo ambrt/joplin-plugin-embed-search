@@ -7,13 +7,13 @@ module.exports = {
                 console.log(_options)
                 const contentScriptId = _context.contentScriptId;
                 const pluginId = _context.pluginId;
+ 
                 console.log("---ids----")
                 console.log(contentScriptId)
                 console.log(pluginId)
 
-                const defaultRender = markdownIt.renderer.rules.fence || function(tokens, idx, options, env, self) {
-                    return self.renderToken(tokens, idx, options, env, self);
-                };
+                const defaultRender = markdownIt.renderer.rules.fence.bind(markdownIt.renderer.rules)
+                  
             
                 markdownIt.renderer.rules.fence = function(tokens, idx, options, env, self) {
                     let token = tokens[idx];
@@ -22,7 +22,7 @@ module.exports = {
 
                     
                     const postMessageWithResponseTest = `
-                        webviewApi.postMessage('${contentScriptId}','${token.content.trim()}').then(function(response) {
+                        webviewApi.postMessage('${contentScriptId}',{type:'getContent',query:'${token.content.trim()}'}).then(function(response) {
                             console.info('Got response from content script: ');
                             document.getElementById('embed-search2').innerHTML=response;
 
@@ -31,15 +31,20 @@ module.exports = {
                     `;
     
                     return `
-                  
+                    
                     <div id="embed-search">
-                    <div id="embed-search2"><style onload="${postMessageWithResponseTest.replace(/\n/g, ' ')}"/></div>
+                    <div id="embed-search2"></div>
                     
                     </div>
-                    
+                    <style onload="${postMessageWithResponseTest.replace(/\n/g, ' ')}"></style>
                     `;
                 };
-            }
+            }, 
+            assets: function() {
+                return [
+                    { name: 'fence.css' }
+                ];
+            },
             
 			
 		}
