@@ -17,14 +17,15 @@ module.exports = {
             
                 markdownIt.renderer.rules.fence = function(tokens, idx, options, env, self) {
                     let token = tokens[idx];
+
                     if (token.info !== 'search') return defaultRender(tokens, idx, options, env, self);
     
 
                     
                     const postMessageWithResponseTest = `
-                        webviewApi.postMessage('${contentScriptId}',{type:'getContent',query:'${token.content.trim()}'}).then(function(response) {
+                        webviewApi.postMessage('${contentScriptId}',{type:'getContent',query:'${token.content.trim().replace(/\'/g,"\"").replace(/\"/g, "__quote__")}'}).then(function(response) {
                             console.info('Got response from content script: ');
-                            document.getElementById('embed-search2').innerHTML=response;
+                            document.getElementById('embed-search-${idx}').innerHTML=response;
 
                         });
                         return false;
@@ -32,8 +33,8 @@ module.exports = {
     
                     return `
                     
-                    <div id="embed-search">
-                    <div id="embed-search2"></div>
+                    <div class="embed-search">
+                    <div id="embed-search-${idx}"></div>
                     
                     </div>
                     <style onload="${postMessageWithResponseTest.replace(/\n/g, ' ')}"></style>
