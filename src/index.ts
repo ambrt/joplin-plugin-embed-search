@@ -47,6 +47,8 @@ joplin.plugins.register({
 			//get content
 			if (message.type == "getContent"){
 				//console.log(message.query)
+			let currentNote= await joplin.workspace.selectedNote();
+			let currentNoteId=currentNote.id
 			let notes
 			let has_more = true
 			let page = 1
@@ -72,14 +74,28 @@ joplin.plugins.register({
 					} else {
 						tick = '<div class="col tick"></div>'
 					}
+
+
 					let newItem =
 						`<div class="flex-grid">${tick}
 						<div class="col note">
 						<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',id:'${element.id}'})">${escapeTitleText(element.title)}</a>
 						</div>
 						</div>`
+					if(element.id==currentNoteId){
+						var re = new RegExp(message.query, 'g');
+						
+						let count = (element.body.match(re).length)
+						if(count>1){
+							searches = searches+newItem
+						}
+					}else{
+						searches = searches+newItem
+					}
+					
+					
 
-					searches = searches+newItem
+					
 					
 					//references = references + "" + `<a href="#" onclick="webviewApi.postMessage('${openNoteId}', '${element.id}')">${escapeTitleText(element.title)}</a><br>`;
 
