@@ -64,6 +64,24 @@ joplin.plugins.register({
 			let searches = ""
 			let query = message.query.replace(/\_\_single_quote\_\_/g,'\'').replace(/\_\_double_quote\_\_/g,'\"')
 			console.log(query)
+			// css bug bug work around
+			let css={};
+			 css['embed-search-flex-grid'] = `
+				
+			display: flex;
+				justify-content:flex-start;
+			  `
+			   css['embed-search-col']=`
+				flex: 1;
+			  `
+			  css['embed-search-tick']=`
+				max-width:22px;
+			  
+			  `
+			  css['embed-search-note']=`
+				margin-top:-2px;
+				font-size: 15px;
+			  `
 			while (has_more) {
 
 				notes = await joplin.data.get(['search'], { query: query, fields: ['id', 'title', 'body', 'is_todo', 'todo_completed'], page: page });
@@ -81,16 +99,16 @@ joplin.plugins.register({
 						} else {
 							checked=""
 						}
-							tick = `<div class="col tick"><input  type="checkbox" ${onClickFunction} ${checked} /></div>`
+							tick = `<div style="${css['embed-search-col']}; ${css['embed-search-tick']}"><input  type="checkbox" ${onClickFunction} ${checked} /></div>`
 
 					} else {
-						tick = '<div class="col tick"></div>'
+						tick = `<div style="${css['embed-search-col']}; ${css['embed-search-tick']}"></div>`
 					}
 
 
 					let newItem =
-						`<div class="flex-grid">${tick}
-						<div class="col note">
+						`<div style="${css['embed-search-flex-grid']}">${tick}
+						<div style="${css['embed-search-col']}; ${css['embed-search-note']}">
 						<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',id:'${element.id}'})">${escapeHtmlTitle(element.title)}</a>
 						</div>
 						</div>`

@@ -43,7 +43,7 @@ module.exports = {
             }, 
             assets: function() {
                 return [
-                    { name: 'fence.css' }
+                    //{ name: 'embedfence.css' }
                 ];
             },
             

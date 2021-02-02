@@ -1,15 +1,15 @@
-.flex-grid {
+.embed-search-flex-grid {
     display: flex;
     justify-content:flex-start;
   }
-  .col {
+  .embed-search-col {
     flex: 1;
   }
-  .tick{
+  .embed-search-tick{
     max-width:22px;
   
   }
-  .note{
+  .embed-search-note{
     margin-top:-2px;
     font-size: 15px;
   }
