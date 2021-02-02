@@ -4,7 +4,16 @@ import { MenuItemLocation, ToolbarButtonLocation, ContentScriptType } from 'api/
 function escapeTitleText(text: string) {
 	return text.replace(/(\[|\])/g, '\\$1');
 }
+function escapeHtmlTitle(text:string){
+	return text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+		return '&#'+i.charCodeAt(0)+';';
+	 });
 
+}
+
+function escapeRegExp(string) {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  }
 joplin.plugins.register({
 	onStart: async function () {
 		//keyboard shortcut
@@ -53,8 +62,11 @@ joplin.plugins.register({
 			let has_more = true
 			let page = 1
 			let searches = ""
+			let query = message.query.replace(/\_\_single_quote\_\_/g,'\'').replace(/\_\_double_quote\_\_/g,'\"')
+			console.log(query)
 			while (has_more) {
-				notes = await joplin.data.get(['search'], { query: message.query.replace(/\_\_quote\_\_/g,'\"'), fields: ['id', 'title', 'body', 'is_todo', 'todo_completed'], page: page });
+
+				notes = await joplin.data.get(['search'], { query: query, fields: ['id', 'title', 'body', 'is_todo', 'todo_completed'], page: page });
 				console.log(notes)
 
 				for (let i = 0; i < notes.items.length; i++) {
@@ -79,11 +91,11 @@ joplin.plugins.register({
 					let newItem =
 						`<div class="flex-grid">${tick}
 						<div class="col note">
-						<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',id:'${element.id}'})">${escapeTitleText(element.title)}</a>
+						<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',id:'${element.id}'})">${escapeHtmlTitle(element.title)}</a>
 						</div>
 						</div>`
 					if(element.id==currentNoteId){
-						var re = new RegExp(message.query, 'g');
+						var re = new RegExp(escapeRegExp(query), 'g');
 						
 						let count = (element.body.match(re).length)
 						if(count>1){

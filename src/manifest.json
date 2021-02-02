@@ -2,7 +2,7 @@
 	"manifest_version": 1,
 	"id": "joplin.plugin.ambrt.embedSearch",
 	"app_min_version": "1.7",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"name": "Embed Search",
 	"description": "Embeds list of links specified by search inside of note",
 	"author": "ambrt",

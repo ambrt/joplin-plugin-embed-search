@@ -23,7 +23,7 @@ module.exports = {
 
                     
                     const postMessageWithResponseTest = `
-                        webviewApi.postMessage('${contentScriptId}',{type:'getContent',query:'${token.content.trim().replace(/\'/g,"\"").replace(/\"/g, "__quote__")}'}).then(function(response) {
+                        webviewApi.postMessage('${contentScriptId}',{type:'getContent',query:'${token.content.trim().replace(/\'/g,"__single_quote__").replace(/\"/g, "__double_quote__")}'}).then(function(response) {
                             console.info('Got response from content script: ');
                             document.getElementById('embed-search-${idx}').innerHTML=response;
 
