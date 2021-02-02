@@ -20,8 +20,8 @@ module.exports = {
 
                     if (token.info !== 'search') return defaultRender(tokens, idx, options, env, self);
     
-
-                    
+                    console.log('getting search fence')
+                    /*
                     const postMessageWithResponseTest = `
                         webviewApi.postMessage('${contentScriptId}',{type:'getContent',query:'${token.content.trim().replace(/\'/g,"__single_quote__").replace(/\"/g, "__double_quote__")}'}).then(function(response) {
                             console.info('Got response from content script: ');
@@ -39,6 +39,7 @@ module.exports = {
                     </div>
                     <style onload="${postMessageWithResponseTest.replace(/\n/g, ' ')}"></style>
                     `;
+                    */
                 };
             }, 
             assets: function() {
