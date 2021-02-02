@@ -58,7 +58,7 @@ joplin.plugins.register({
 				//console.log(message.query)
 			let currentNote= await joplin.workspace.selectedNote();
 			let currentNoteId=currentNote.id
-			let notes
+			//let notes =[]
 			let has_more = true
 			let page = 1
 			let searches = ""
@@ -84,7 +84,7 @@ joplin.plugins.register({
 			  `
 			while (has_more) {
 
-				notes = await joplin.data.get(['search'], { query: query, fields: ['id', 'title', 'body', 'is_todo', 'todo_completed'], page: page });
+				let notes = await joplin.data.get(['search'], { query: query, fields: ['id', 'title', 'body', 'is_todo', 'todo_completed'], page: page });
 				console.log(notes)
 
 				for (let i = 0; i < notes.items.length; i++) {
