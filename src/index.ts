@@ -5,11 +5,7 @@ joplin.plugins.register({
 	onStart: async function () {
 		let contentScriptId = "embedSearch"
 
-		await joplin.contentScripts.onMessage(contentScriptId, async (message: any) => {
-
-			console.log("")
-			return "some content";
-		});
+		
 
 
 
