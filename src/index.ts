@@ -61,8 +61,11 @@ joplin.plugins.register({
 			//let notes =[]
 			let has_more = true
 			let page = 1
-			let searches = ""
+			let searches = []
 			let query = message.query.replace(/\_\_single_quote\_\_/g,'\'').replace(/\_\_double_quote\_\_/g,'\"')
+			let sortAsc = query.includes("sort:asc")
+			let sortDesc = query.includes("sort:desc")
+			query = query.replace("sort:desc","").replace("sort:asc","")
 			console.log(query)
 			// css bug bug work around
 			let css={};
@@ -83,9 +86,10 @@ joplin.plugins.register({
 				font-size: 15px;
 			  `
 			while (has_more) {
-
+				let responseArray=[]
 				let notes = await joplin.data.get(['search'], { query: query, fields: ['id', 'title', 'body', 'is_todo', 'todo_completed'], page: page });
-				console.log(notes)
+				//console.log(notes)
+
 
 				for (let i = 0; i < notes.items.length; i++) {
 					let element = notes.items[i];
@@ -117,10 +121,10 @@ joplin.plugins.register({
 						
 						let count = (element.body.match(re).length)
 						if(count>1){
-							searches = searches+newItem
+							searches.push({title:escapeHtmlTitle(element.title),content:newItem})
 						}
 					}else{
-						searches = searches+newItem
+						searches.push({title:escapeHtmlTitle(element.title),content:newItem})
 					}
 					
 					
@@ -133,7 +137,36 @@ joplin.plugins.register({
 				}
 				if (notes.has_more) { page = page + 1 } else { has_more = false }
 			}
-			let newData = searches
+			// loop here
+			let newData=""
+			function compareAsc( a, b ) {
+				if ( a.title < b.title ){
+				  return -1;
+				}
+				if ( a.title > b.title ){
+				  return 1;
+				}
+				return 0;
+			  }
+			if (sortAsc){
+				
+				searches = searches.sort( compareAsc )
+				for(let i=0;i<searches.length;i++){
+					newData=newData+searches[i].content
+				}
+				  
+				  
+			}else if(sortDesc){
+				searches = searches.sort( compareAsc ).reverse()
+				  for(let i=0;i<searches.length;i++){
+					  newData=newData+searches[i].content
+				  }
+			}else{
+				for(let i=0;i<searches.length;i++){
+					newData=newData+searches[i].content
+				}
+			}
+			
 
 			let response = `${newData}`
 			return response;
