@@ -12,7 +12,7 @@ function escapeHtmlTitle(text:string){
 }
 
 function escapeRegExp(string) {
-	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+	return string.replace(/[.*+?^${}()!|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 joplin.plugins.register({
 	onStart: async function () {
@@ -63,9 +63,17 @@ joplin.plugins.register({
 			let page = 1
 			let searches = []
 			let query = message.query.replace(/\_\_single_quote\_\_/g,'\'').replace(/\_\_double_quote\_\_/g,'\"')
+			
 			let sortAsc = query.includes("sort:asc")
 			let sortDesc = query.includes("sort:desc")
-			query = query.replace("sort:desc","").replace("sort:asc","")
+			let isThisNotebook = query.includes("notebook:this")
+			query = query.replace("sort:desc","").replace("sort:asc","").replace("notebook:this","")
+			let queryOrg = query.trim()
+			if(isThisNotebook){
+				let fol =await joplin.data.get(['folders', currentNote.parent_id], {fields:['name']})
+				query = query+" notebook:\""+fol.title+"\""
+			}
+
 			console.log(query)
 			// css bug bug work around
 			let css={};
@@ -86,9 +94,9 @@ joplin.plugins.register({
 				font-size: 15px;
 			  `
 			while (has_more) {
-				let responseArray=[]
+				
 				let notes = await joplin.data.get(['search'], { query: query, fields: ['id', 'title', 'body', 'is_todo', 'todo_completed'], page: page });
-				//console.log(notes)
+				console.log(notes)
 
 
 				for (let i = 0; i < notes.items.length; i++) {
@@ -117,9 +125,15 @@ joplin.plugins.register({
 						</div>
 						</div>`
 					if(element.id==currentNoteId){
-						var re = new RegExp(escapeRegExp(query), 'g');
-						
-						let count = (element.body.match(re).length)
+						var re = new RegExp(escapeRegExp(queryOrg), 'g');
+						console.log()
+						let count
+						try{
+						 count = (element.body.match(re).length)
+						}
+						catch(err){
+							alert("re")
+						}
 						if(count>1){
 							searches.push({title:escapeHtmlTitle(element.title),content:newItem})
 						}
@@ -140,10 +154,10 @@ joplin.plugins.register({
 			// loop here
 			let newData=""
 			function compareAsc( a, b ) {
-				if ( a.title < b.title ){
+				if ( a.title.toLowerCase() < b.title.toLowerCase() ){
 				  return -1;
 				}
-				if ( a.title > b.title ){
+				if ( a.title.toLowerCase() > b.title.toLowerCase() ){
 				  return 1;
 				}
 				return 0;
