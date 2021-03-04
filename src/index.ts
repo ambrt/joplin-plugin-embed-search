@@ -67,7 +67,9 @@ joplin.plugins.register({
 			let sortAsc = query.includes("sort:asc")
 			let sortDesc = query.includes("sort:desc")
 			let isThisNotebook = query.includes("notebook:this")
-			query = query.replace("sort:desc","").replace("sort:asc","").replace("notebook:this","")
+			let isContent = query.includes("content:true")
+			query = query.replace("sort:desc","").replace("sort:asc","").replace("notebook:this","").replace("content:true","")
+
 			let queryOrg = query.trim()
 			if(isThisNotebook){
 				let fol =await joplin.data.get(['folders', currentNote.parent_id], {fields:['name']})
@@ -101,7 +103,7 @@ joplin.plugins.register({
 
 				for (let i = 0; i < notes.items.length; i++) {
 					let element = notes.items[i];
-					let tick
+					let tick;
 					if (element.is_todo) {
 						let onClickFunction = `onclick="webviewApi.postMessage('${contentScriptId}',{type:'toggleTodo',id:'${element.id}'});"`
 						let checked
@@ -116,12 +118,28 @@ joplin.plugins.register({
 					} else {
 						tick = `<div style="${css['embed-search-col']}; ${css['embed-search-tick']}"></div>`
 					}
-
-
+					let body
+					if(isContent){
+						let bodyNotParsed = element.body
+						let noteId
+						
+						body = bodyNotParsed.replace(/\[([^\]]*)\]\(([^)]*)\)/g, function (_, g1, g2) {
+							if(g2.substr(0,2)==":/"){
+								noteId = g2.substr(2).split("#")[0]
+								return `<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',id:'${noteId}'})">${g1}</a>	`
+							}	else{
+								return `<a href="${g2}">${g1}</a>`
+							}
+							
+						}); 
+						body=body.replace(/\n/g,"<br>")
+						body=body.replace(/https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/g, '<a href="$&">$&</a>')
+					}
 					let newItem =
 						`<div style="${css['embed-search-flex-grid']}">${tick}
 						<div style="${css['embed-search-col']}; ${css['embed-search-note']}">
 						<a href="#" onclick="webviewApi.postMessage('${contentScriptId}', {type:'openNote',id:'${element.id}'})">${escapeHtmlTitle(element.title)}</a>
+						${(()=>{if(isContent){return "<br><ul><li>"+body+"</li></ul><br><br>"} return ""})()}
 						</div>
 						</div>`
 					if(element.id==currentNoteId){
@@ -132,7 +150,7 @@ joplin.plugins.register({
 						 count = (element.body.match(re).length)
 						}
 						catch(err){
-							alert("re")
+							//alert("re")
 						}
 						if(count>1){
 							searches.push({title:escapeHtmlTitle(element.title),content:newItem})
