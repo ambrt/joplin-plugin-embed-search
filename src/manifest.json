@@ -6,7 +6,7 @@
 	"name": "Embed Search",
 	"description": "Embeds list of links specified by search inside of note",
 	"author": "ambrt",
-	"homepage_url": "",
+	"homepage_url": "https://discourse.joplinapp.org/t/embed-any-search-with-content/14328",
 	"repository_url": "https://github.com/ambrt/joplin-plugin-embed-search",
 	"keywords": []
 }
