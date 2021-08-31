@@ -1,5 +1,6 @@
 import joplin from 'api';
 import { MenuItemLocation, ToolbarButtonLocation, ContentScriptType } from 'api/types';
+//import { MarkupToHtml} from 'joplin-renderer';
 
 function escapeTitleText(text: string) {
 	return text.replace(/(\[|\])/g, '\\$1');
@@ -119,7 +120,17 @@ joplin.plugins.register({
 						tick = `<div style="${css['embed-search-col']}; ${css['embed-search-tick']}"></div>`
 					}
 					let body
+					let woo
 					if(isContent){
+						
+					
+
+
+//let  markupToHtml = new MarkupToHtml({});
+/*
+woo = await markupToHtml.render(MTH.MARKUP_LANGUAGE_MARKDOWN, markdown, theme, options);
+console.log(woo.html)*/
+
 						let bodyNotParsed = element.body
 						let noteId
 						
@@ -221,6 +232,11 @@ joplin.plugins.register({
 		});
 
 
+		// refactor search to its function
+		// have code mirror extension
+		// create setting to preview links
+		// create setting to preview single content
+		// create setting to preview content of links.
 
 
 

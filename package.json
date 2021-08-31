@@ -1,6 +1,6 @@
 {
   "name": "joplin-plugin-embed-search",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "scripts": {
     "dist": "webpack --joplin-plugin-config buildMain && webpack --joplin-plugin-config buildExtraScripts && webpack --joplin-plugin-config createArchive",
     "prepare": "npm run dist",
@@ -25,5 +25,8 @@
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "yargs": "^16.2.0"
+  },
+  "dependencies": {
+    "joplin-renderer": "^1.0.8"
   }
 }
